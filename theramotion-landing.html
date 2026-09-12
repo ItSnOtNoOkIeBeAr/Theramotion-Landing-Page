@@ -159,6 +159,73 @@
     .therapist-icon { margin: 0 auto; }
     .cta-box { flex-direction: column; text-align: center; }
   }
+
+  /* ---------- therapist dashboard showcase modal ---------- */
+  .dash-modal-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(16,28,24,0.6); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+    opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .dash-modal-overlay.active { opacity: 1; visibility: visible; }
+  .dash-modal {
+    background: var(--cream-soft); border-radius: 26px; width: 100%; max-width: 880px;
+    max-height: 92vh; overflow-y: auto; box-shadow: 0 30px 80px rgba(10,20,16,0.35);
+    transform: scale(0.95) translateY(14px); transition: transform 0.35s cubic-bezier(.2,.8,.2,1);
+  }
+  .dash-modal-overlay.active .dash-modal { transform: scale(1) translateY(0); }
+  .dash-modal-header {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+    padding: 30px 32px 22px; border-bottom: 1px solid var(--border-soft);
+  }
+  .dash-modal-header .eyebrow { margin-bottom: 8px; }
+  .dash-modal-header h3 { font-size: 24px; }
+  .dash-modal-header p { font-size: 14px; color: var(--muted); margin-top: 8px; max-width: 460px; line-height: 1.5; }
+  .dash-modal-close {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--white); flex-shrink: 0;
+    border: 1px solid var(--border-soft); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .dash-modal-close:hover { background: var(--sage); transform: rotate(90deg); }
+  .dash-modal-body { padding: 26px 32px 34px; }
+  .dash-browser-frame {
+    background: var(--white); border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--border-soft); box-shadow: 0 18px 46px rgba(28,28,26,0.12);
+  }
+  .dash-browser-bar { display: flex; align-items: center; gap: 7px; padding: 12px 16px; background: var(--cream); border-bottom: 1px solid var(--border-soft); }
+  .dash-browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dash-browser-url {
+    margin-left: 10px; background: var(--white); border: 1px solid var(--border-soft); border-radius: 7px;
+    padding: 5px 14px; font-size: 12px; color: var(--muted-light); flex: 1; max-width: 300px;
+  }
+  .dash-slide-wrap { position: relative; background: var(--cream-soft); }
+  .dash-slide-img {
+    width: 100%; height: 420px; object-fit: contain; display: block; background: var(--cream-soft);
+    opacity: 0; transition: opacity 0.35s ease;
+  }
+  .dash-slide-img.loaded { opacity: 1; }
+  .dash-nav-btn {
+    position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(255,255,255,0.92); border: 1px solid var(--border-soft); box-shadow: 0 6px 18px rgba(28,28,26,0.14);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease; color: var(--forest);
+  }
+  .dash-nav-btn:hover { background: var(--sage); }
+  .dash-nav-btn.prev { left: 14px; }
+  .dash-nav-btn.next { right: 14px; }
+  .dash-caption { text-align: center; margin-top: 22px; }
+  .dash-caption .step-label { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--forest); font-weight: 700; margin-bottom: 8px; }
+  .dash-caption h4 { font-size: 19px; margin-bottom: 7px; }
+  .dash-caption p { font-size: 14px; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+  .dash-dots { display: flex; justify-content: center; gap: 9px; margin-top: 20px; }
+  .dash-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-soft); cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; border: none; padding: 0; }
+  .dash-dot.active { background: var(--forest); transform: scale(1.35); }
+  @media (max-width: 640px) {
+    .dash-modal-header { padding: 24px 20px 18px; }
+    .dash-modal-body { padding: 20px 18px 26px; }
+    .dash-slide-img { height: 280px; }
+    .dash-nav-btn { width: 36px; height: 36px; }
+  }
 </style>
 </head>
 <body>
@@ -336,7 +403,7 @@
         <p class="eyebrow">FOR THERAPISTS</p>
         <h2>Your Patients, Progressing — Visible to You</h2>
         <p>A companion web dashboard lets you monitor session results, review score trends, and write clinical notes for every patient — without waiting for their next visit to know how they're doing.</p>
-        <a href="#" class="therapist-link">Learn about the therapist dashboard →</a>
+        <a href="#" class="therapist-link" id="dash-open-trigger">Learn about the therapist dashboard →</a>
       </div>
     </div>
   </div>
@@ -356,13 +423,54 @@
     <div class="cta-box reveal reveal-delay-2">
       <div class="qr-box"><img src="data:image/png;base64,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" alt="QR code to TheraMotion app build" style="width:100%; height:100%;"></div>
       <div class="cta-box-text">
-        <a href="https://expo.dev/accounts/miquella/projects/frontend/builds/966170b7-0c6a-474a-b72d-960872f893d1" target="_blank" style="color: var(--forest); font-weight: 600; font-size: 12.5px; display: inline-block; margin-top: 8px;">Or download via Expo →</a>
         <div style="font-weight:700; font-size:15px;">Scan with your phone</div>
         <p>Opens the current TheraMotion app build.</p>
+        <a href="https://expo.dev/accounts/miquella/projects/frontend/builds/966170b7-0c6a-474a-b72d-960872f893d1" target="_blank" style="color: var(--forest); font-weight: 600; font-size: 12.5px; display: inline-block; margin-top: 8px;">Or download via Expo →</a>
       </div>
     </div>
   </div>
 </section>
+
+<!-- ============ THERAPIST DASHBOARD SHOWCASE MODAL ============ -->
+<div class="dash-modal-overlay" id="dash-modal-overlay">
+  <div class="dash-modal" role="dialog" aria-modal="true" aria-labelledby="dash-modal-title">
+    <div class="dash-modal-header">
+      <div>
+        <p class="eyebrow">THERAPIST DASHBOARD</p>
+        <h3 id="dash-modal-title">A Clinical View Into Every Patient's Progress</h3>
+        <p>From secure sign-in to session-by-session notes, here's what your clinical team sees.</p>
+      </div>
+      <div class="dash-modal-close" id="dash-modal-close" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M18 6L6 18" stroke="#1C1C1A" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="dash-modal-body">
+      <div class="dash-browser-frame">
+        <div class="dash-browser-bar">
+          <span class="dash-browser-dot" style="background:#EFC3B3;"></span>
+          <span class="dash-browser-dot" style="background:#E5D3A0;"></span>
+          <span class="dash-browser-dot" style="background:#C7D4BC;"></span>
+          <span class="dash-browser-url" id="dash-browser-url">portal.theramotion.com/login</span>
+        </div>
+        <div class="dash-slide-wrap">
+          <img class="dash-slide-img" id="dash-slide-img" src="" alt="">
+          <div class="dash-nav-btn prev" id="dash-prev" aria-label="Previous screen">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="dash-nav-btn next" id="dash-next" aria-label="Next screen">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="dash-caption">
+        <div class="step-label" id="dash-step-label">STEP 1 OF 4</div>
+        <h4 id="dash-caption-title"></h4>
+        <p id="dash-caption-desc"></p>
+      </div>
+      <div class="dash-dots" id="dash-dots"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ============ FOOTER ============ -->
 <footer>
@@ -401,6 +509,67 @@
   }, { threshold: 0.15 });
 
   document.querySelectorAll('.reveal:not(.in)').forEach(el => observer.observe(el));
+
+  // ---------- therapist dashboard showcase modal ----------
+  const dashSlides = [
+    { src: 'assets/dashboard/login.jpg', url: 'portal.theramotion.com/login', title: 'Secure Clinical Sign-In', desc: 'Therapists access the portal through a dedicated, credentialed login — keeping every patient record behind a locked door.' },
+    { src: 'assets/dashboard/overview.jpg', url: 'portal.theramotion.com/dashboard', title: 'Your Full Caseload, At a Glance', desc: "Today's visits, live sessions, and every patient under your care — summarized the moment you sign in." },
+    { src: 'assets/dashboard/notes-empty.jpg', url: 'portal.theramotion.com/patients/florencio-zotomayor', title: 'One Click Into Any Patient', desc: 'Open a patient profile to review their exercise side and past clinical notes before a visit.' },
+    { src: 'assets/dashboard/notes-filled.jpg', url: 'portal.theramotion.com/patients/florencio-zotomayor', title: 'Document Progress in Seconds', desc: 'Log observations right after a session — form corrections, improvements, next steps — so the record stays current.' }
+  ];
+  let dashIndex = 0;
+
+  const dashOverlay = document.getElementById('dash-modal-overlay');
+  const dashImg = document.getElementById('dash-slide-img');
+  const dashUrl = document.getElementById('dash-browser-url');
+  const dashTitle = document.getElementById('dash-caption-title');
+  const dashDesc = document.getElementById('dash-caption-desc');
+  const dashStepLabel = document.getElementById('dash-step-label');
+  const dashDotsWrap = document.getElementById('dash-dots');
+
+  dashSlides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dash-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Go to screen ' + (i + 1));
+    dot.addEventListener('click', () => renderDashSlide(i));
+    dashDotsWrap.appendChild(dot);
+  });
+
+  function renderDashSlide(i) {
+    dashIndex = (i + dashSlides.length) % dashSlides.length;
+    const slide = dashSlides[dashIndex];
+    dashImg.classList.remove('loaded');
+    dashImg.src = slide.src;
+    dashImg.alt = slide.title;
+    dashUrl.textContent = slide.url;
+    dashTitle.textContent = slide.title;
+    dashDesc.textContent = slide.desc;
+    dashStepLabel.textContent = 'STEP ' + (dashIndex + 1) + ' OF ' + dashSlides.length;
+    [...dashDotsWrap.children].forEach((dot, idx) => dot.classList.toggle('active', idx === dashIndex));
+  }
+  dashImg.addEventListener('load', () => dashImg.classList.add('loaded'));
+
+  function openDashModal() {
+    renderDashSlide(0);
+    dashOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDashModal() {
+    dashOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('dash-open-trigger').addEventListener('click', (e) => { e.preventDefault(); openDashModal(); });
+  document.getElementById('dash-modal-close').addEventListener('click', closeDashModal);
+  document.getElementById('dash-prev').addEventListener('click', () => renderDashSlide(dashIndex - 1));
+  document.getElementById('dash-next').addEventListener('click', () => renderDashSlide(dashIndex + 1));
+  dashOverlay.addEventListener('click', (e) => { if (e.target === dashOverlay) closeDashModal(); });
+  document.addEventListener('keydown', (e) => {
+    if (!dashOverlay.classList.contains('active')) return;
+    if (e.key === 'Escape') closeDashModal();
+    if (e.key === 'ArrowLeft') renderDashSlide(dashIndex - 1);
+    if (e.key === 'ArrowRight') renderDashSlide(dashIndex + 1);
+  });
 </script>
 </body>
 </html>
