@@ -123,11 +123,30 @@
   .feature-item { display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; color: #EAF0EC; }
 
   /* ---------- for therapists ---------- */
-  .therapist-section { display: grid; grid-template-columns: 60px 1fr; gap: 24px; max-width: 780px; margin: 0 auto; text-align: left; }
-  .therapist-icon { width: 60px; height: 60px; border-radius: 18px; background: var(--sage); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .therapist-section h2 { font-size: 28px; margin-bottom: 12px; }
-  .therapist-section p { font-size: 15.5px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
-  .therapist-link { font-size: 14px; font-weight: 600; color: var(--forest); }
+  .therapist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .therapist-icon { width: 60px; height: 60px; border-radius: 18px; background: var(--sage); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-bottom: 22px; }
+  .therapist-copy h2 { font-size: 32px; margin-bottom: 14px; }
+  .therapist-copy p { font-size: 15.5px; color: var(--muted); line-height: 1.65; margin-bottom: 18px; max-width: 440px; }
+  .therapist-link { font-size: 14px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; background: none; border: none; padding: 0; font-family: 'Inter', sans-serif; }
+  .therapist-link:hover { text-decoration: underline; }
+
+  .dash-preview-wrap { position: relative; display: flex; align-items: center; justify-content: center; height: 420px; }
+  .dash-preview-card {
+    position: relative; width: 100%; max-width: 420px; border-radius: 20px; background: var(--white);
+    box-shadow: 0 30px 60px rgba(20,30,25,0.18), 0 8px 20px rgba(20,30,25,0.08);
+    overflow: hidden; cursor: pointer; border: 1px solid var(--border-soft);
+    animation: floaty 5s ease-in-out infinite; transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .dash-preview-card:hover { transform: translateY(-6px) scale(1.015); box-shadow: 0 36px 70px rgba(20,30,25,0.22), 0 10px 24px rgba(20,30,25,0.1); }
+  .dash-preview-card:focus-visible { outline: 2px solid var(--forest); outline-offset: 3px; }
+  .dash-preview-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: var(--cream); border-bottom: 1px solid var(--border-soft); }
+  .dash-preview-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dash-preview-card img { width: 100%; display: block; }
+  .dash-preview-badge {
+    position: absolute; bottom: -18px; right: -14px; background: var(--forest); color: #fff; padding: 12px 18px; border-radius: 16px;
+    box-shadow: 0 14px 30px rgba(20,30,25,0.25); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+  }
+  .dash-preview-badge .dot-live { width: 7px; height: 7px; border-radius: 50%; background: #7FE0A0; animation: pulseIcon 1.8s ease-in-out infinite; }
 
   /* ---------- safety strip ---------- */
   .safety-strip { background: var(--cream-soft); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); padding: 34px 0; text-align: center; }
@@ -150,13 +169,15 @@
   .footer-disclaimer { margin-top: 30px; padding-top: 24px; border-top: 1px solid var(--border-soft); font-size: 11.5px; color: var(--muted-light); text-align: center; }
 
   @media (max-width: 880px) {
-    .hero-grid, .how-grid, .progress-grid { grid-template-columns: 1fr; }
+    .hero-grid, .how-grid, .progress-grid, .therapist-grid { grid-template-columns: 1fr; }
     .hero-visual { height: 460px; margin-top: 40px; }
     .ex-grid { grid-template-columns: 1fr 1fr; }
     .hero h1 { font-size: 38px; }
     .nav-links { display: none; }
-    .therapist-section { grid-template-columns: 1fr; text-align: center; }
-    .therapist-icon { margin: 0 auto; }
+    .therapist-copy { text-align: center; }
+    .therapist-copy p { margin-left: auto; margin-right: auto; }
+    .therapist-icon { margin: 0 auto 22px auto; }
+    .dash-preview-wrap { height: 320px; margin-top: 36px; }
     .cta-box { flex-direction: column; text-align: center; }
   }
 
@@ -393,17 +414,30 @@
 </section>
 
 <!-- ============ FOR THERAPISTS ============ -->
-<section id="therapists">
+<section id="therapists" style="background: var(--cream-soft);">
   <div class="wrap">
-    <div class="therapist-section reveal">
-      <div class="therapist-icon">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 5h13a2 2 0 012 2v6a2 2 0 01-2 2H10l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z" stroke="#4F6B45" stroke-width="1.7" stroke-linejoin="round"/></svg>
-      </div>
-      <div>
+    <div class="therapist-grid">
+      <div class="therapist-copy reveal">
+        <div class="therapist-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 5h13a2 2 0 012 2v6a2 2 0 01-2 2H10l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z" stroke="#4F6B45" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        </div>
         <p class="eyebrow">FOR THERAPISTS</p>
         <h2>Your Patients, Progressing — Visible to You</h2>
         <p>A companion web dashboard lets you monitor session results, review score trends, and write clinical notes for every patient — without waiting for their next visit to know how they're doing.</p>
-        <a href="#" class="therapist-link" id="dash-open-trigger">Learn about the therapist dashboard →</a>
+        <a href="#" class="therapist-link dash-open-trigger">Learn about the therapist dashboard →</a>
+      </div>
+      <div class="dash-preview-wrap reveal reveal-delay-1">
+        <div class="blob blob1" style="background: var(--sage);"></div>
+        <div class="blob blob2" style="background: var(--tan);"></div>
+        <div class="dash-preview-card dash-open-trigger" role="button" tabindex="0" aria-label="Open therapist dashboard preview">
+          <div class="dash-preview-bar">
+            <span class="dash-preview-dot" style="background:#EFC3B3;"></span>
+            <span class="dash-preview-dot" style="background:#E5D3A0;"></span>
+            <span class="dash-preview-dot" style="background:#C7D4BC;"></span>
+          </div>
+          <img src="assets/dashboard/overview.jpg" alt="Therapist dashboard preview showing patient caseload">
+          <div class="dash-preview-badge"><span class="dot-live"></span> 8 patients · Live view</div>
+        </div>
       </div>
     </div>
   </div>
@@ -559,7 +593,12 @@
     document.body.style.overflow = '';
   }
 
-  document.getElementById('dash-open-trigger').addEventListener('click', (e) => { e.preventDefault(); openDashModal(); });
+  document.querySelectorAll('.dash-open-trigger').forEach((el) => {
+    el.addEventListener('click', (e) => { e.preventDefault(); openDashModal(); });
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDashModal(); }
+    });
+  });
   document.getElementById('dash-modal-close').addEventListener('click', closeDashModal);
   document.getElementById('dash-prev').addEventListener('click', () => renderDashSlide(dashIndex - 1));
   document.getElementById('dash-next').addEventListener('click', () => renderDashSlide(dashIndex + 1));
